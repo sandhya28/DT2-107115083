@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<head>
+	
+	<title>
+		DeltaTask2
+	</title>
+	
+	<style type="text/css">
+		canvas
+			{
+				border: 1px solid black;
+
+			}
+
+		#instructions
+			{
+				font-family: "Comic Sans MS";
+				font-size: 20px; 
+			}
+
+		#disp
+			{
+				margin-left:  300px;
+				margin-top: 4px;
+				margin-right: 900px;
+			}
+
+		#replay
+			{
+				background-color: #777;
+    			color: white;
+    			padding: 1vw 3vw;
+    			text-align: center;
+    			border: none;
+    			border-radius: 10px;
+    			font-style: "Comic Sans MS";
+    	    	font-size: 20px;
+    			cursor: pointer;
+			}
+	</style>
+</head>
+
+<body onload="startgame()" >
+	<div id='disp'>
+		<input type="button" id="replay" value="RESTART" onclick="newgame()">
+	</div>
+
+	<p id="instructions">
+		To control the game use up, down and right arrow keys.<br>
+		To Pause the game press spacebar. Press the same to resume.
+	</p>
+
+	<script type="text/javascript" src="dgame1.js"></script>
+	<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+	<script type="text/javascript" src="jquery.js"></script>
+
+</body>
+</html>
