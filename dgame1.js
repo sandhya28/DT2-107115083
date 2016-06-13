@@ -3,10 +3,12 @@ var frameindx = 0;
 var frameindy = 0;
 var noofframesx = 8;
 var noofframesy = 1;
+var flag=1;
 var press = 0;
 var runner;
 var background;
 var obstacle = [];
+var accinterval;
 var coin = [];
 var gameend;
 var gamemusic;
@@ -65,15 +67,16 @@ var gamearea =
     },
     
     stop : function() 
-    {
-        gameover.text="GAME OVER";
-        gameover.update();
-        clearInterval(this.interval);
-        clearInterval(gamepause);
-        setTimeout( function(){
-        $("#instructions").hide();
-        $('canvas').fadeTo(3000,0.4);
-        $("#disp").fadeIn(3000);},1000);
+    {   
+            gameover.text="GAME OVER";
+            gameover.update();
+            clearInterval(this.interval);
+            clearInterval(gamepause);
+            setTimeout( function(){
+            $("#instructions").hide();
+            $('canvas').fadeTo(3000,0.4);
+            $("#disp").fadeIn(3000);},1000);
+        
     }   
 
 }
@@ -148,11 +151,22 @@ function component(width, height, srce, x, y, type)
         }
 
         if(this.type == "image")
-        {     
+        {   
             if(this.y>250)
-            {
+            {   
+                if(flag==0)
+                {
+                    accelerate(3);
+                    setTimeout(function()
+                        {   clearInterval(accinterval);
+                            gamearea.stop();
+                        },1000);
+                }
+                else
+                {
                 this.y=250;
                 accelerate(0);
+                }
             }
             
             else if(this.y<50)
@@ -184,20 +198,27 @@ function component(width, height, srce, x, y, type)
 function updatearea() 
 {
     gamearea.clear();
+
     background.speedx = -1;
     background.newpos();    
     background.update();
+    
     gamearea.count++;
-    if(gamearea.count%500==0)
+    
+    
+    if(gamearea.count%500==0 )
         obstacle.push(new component(40,40,"coin.png",800,130,"coin"));
     else if(gamearea.count%750==0)
         obstacle.push(new component(40,40,"coin.png",800,110,"coin"));
     else if(gamearea.count%600==0)
         obstacle.push(new component(40,40,"coin.png",800,160,"coin"));
-    if(gamearea.count%500==0)
-        obstacle.push(new component(50,105,"obs2.jpg",800,240,"obstacle"));
+    if(gamearea.count % 1600 == 0)
+        obstacle.push(new component(200,100,"block.png",800,300,"block")); 
     else if(gamearea.count%1400==0)
         obstacle.push(new component(60,60,"obs3.jpg",800,70,"obstaclecrow"));
+    if(gamearea.count%1600 > 200)   
+     if(gamearea.count%500==0 )
+        obstacle.push(new component(50,105,"obs2.jpg",800,240,"obstacle"));
     else if(gamearea.count%700==0)
         obstacle.push(new component(65,130,"obs4.png",800,215,"obstacle"));
        
@@ -216,8 +237,7 @@ function updatearea()
         fwdmove();
     }
     
-    runner.newpos();    
-    runner.update();
+   
     
     myscore.text="SCORE: " + (gamearea.count+bonus*500);
     myscore.update();
@@ -245,8 +265,21 @@ function updatearea()
                 obstacle.splice(i,1);
                 bonus++;
             }
+            else if(obstacle[i].type=="block")
+            {    
+                flag=0;
+                accelerate(2);
+                runner.newpos();
+                accinterval=setInterval(runner.newpos(0),10);
+                gamemusic.stop();
+                gameend.play();
+                break;
+
+            }
         }
     }
+    runner.newpos();    
+    runner.update();
 
 }
 
