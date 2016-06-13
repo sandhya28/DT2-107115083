@@ -1,3 +1,4 @@
+var bonus = 0;
 var frameindx = 0;
 var frameindy = 0;
 var noofframesx = 8;
@@ -6,6 +7,7 @@ var press = 0;
 var runner;
 var background;
 var obstacle = [];
+var coin = [];
 var gameend;
 var gamemusic;
 var gameover;
@@ -17,7 +19,7 @@ var myscore;
     {
         runner = new component(60, 70, "runnerimg.png", 50, 150, "image");
         background = new component(800, 400, "background1.jpg", 0, 0, "background");
-        myscore = new component("30px", "Comic Sans MS", "black", 600, 40, "text");
+        myscore = new component("30px", "Comic Sans MS", "black", 550, 40, "text");
         gameend = new sound("gameend.mp3");
         accelerate(1);
         $('#disp').hide();     
@@ -68,9 +70,10 @@ var gamearea =
         gameover.update();
         clearInterval(this.interval);
         clearInterval(gamepause);
+        setTimeout( function(){
         $("#instructions").hide();
-        $('canvas').fadeTo(3000,0.2);
-        $("#disp").fadeIn(3000);
+        $('canvas').fadeTo(3000,0.4);
+        $("#disp").fadeIn(3000);},1000);
     }   
 
 }
@@ -185,24 +188,19 @@ function updatearea()
     background.newpos();    
     background.update();
     gamearea.count++;
-    
+    if(gamearea.count%500==0)
+        obstacle.push(new component(40,40,"coin.png",800,130,"coin"));
+    else if(gamearea.count%750==0)
+        obstacle.push(new component(40,40,"coin.png",800,110,"coin"));
+    else if(gamearea.count%600==0)
+        obstacle.push(new component(40,40,"coin.png",800,160,"coin"));
     if(gamearea.count%500==0)
         obstacle.push(new component(50,105,"obs2.jpg",800,240,"obstacle"));
     else if(gamearea.count%1400==0)
         obstacle.push(new component(60,60,"obs3.jpg",800,70,"obstaclecrow"));
     else if(gamearea.count%700==0)
         obstacle.push(new component(65,130,"obs4.png",800,215,"obstacle"));
-    
-    for (var i = 0; i < obstacle.length; i++) 
-    {
-        obstacle[i].x--;
-    
-        if(obstacle[i].type=="obstaclecrow")
-            obstacle[i].x-=3;
-    
-        obstacle[i].update();
-    }
-    
+       
     accelerate(2);
     
     if (gamearea.key && gamearea.key == 38) 
@@ -221,19 +219,35 @@ function updatearea()
     runner.newpos();    
     runner.update();
     
-    myscore.text="SCORE: " + gamearea.count;
+    myscore.text="SCORE: " + (gamearea.count+bonus*500);
     myscore.update();
-    
+
     for (var i = 0; i < obstacle.length; i++) 
     {
+        obstacle[i].x--;
+    
+        if(obstacle[i].type=="obstaclecrow")
+            obstacle[i].x-=3;
+    
+        obstacle[i].update();
+         
         if(runner.collision(obstacle[i]))
-        {  
-            gamemusic.stop();
-            gameend.play();
-            gamearea.stop();
+        {
+            if(obstacle[i].type=="obstacle"||obstacle[i].type=="obstaclecrow")
+            {  
+                gamemusic.stop();
+                gameend.play();
+                gamearea.stop();
+                break;
+            }   
+            else if(obstacle[i].type=="coin")
+            {
+                obstacle.splice(i,1);
+                bonus++;
+            }
         }
     }
-    
+
 }
 
 function fwdmove()
