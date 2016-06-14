@@ -14,6 +14,7 @@ var gameend;
 var gamemusic;
 var gameover;
 var myscore;
+var uppress = 1;
     gamemusic = new sound("gamemusic.mp3");
     gamemusic.play();
     gameover = new component("40px", "Comic Sans MS", "green", 260, 180, "text");
@@ -158,7 +159,8 @@ function component(width, height, srce, x, y, type)
                 {
                     accelerate(3);
                     setTimeout(function()
-                        {   clearInterval(accinterval);
+                        {   
+                            clearInterval(accinterval);
                             gamearea.stop();
                         },1000);
                 }
@@ -225,9 +227,21 @@ function updatearea()
     accelerate(2);
     
     if (gamearea.key && gamearea.key == 38) 
-    {
-        accelerate(-6); 
+    {   if(uppress%100!=0)
+        {
+            uppress++;
+            accelerate(-4);
+        }
+        else
+            setTimeout(function()
+                {
+                    uppress=1;
+                },2000);
     }
+    else
+        uppress=1;
+   
+       
     if (gamearea.key && gamearea.key == 40) 
     {
         accelerate(2);
